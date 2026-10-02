@@ -1,0 +1,24 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# ---- 本地虚拟环境 ----
+py311_venv/
+.venv/
+venv/
+
+# ---- 运行时日志 / 错误文件 ----
+error_log.txt
+
+# ---- IDE / 工具记忆 ----
+.workbuddy/
+.idea/
+.vscode/
+
+# ---- 验证脚本临时生成物（非交付物） ----
+/_m5_core.png
+/_m4_core.png
+/_p3_core.png
+/_p4_core.png
+/_p5_core.png
