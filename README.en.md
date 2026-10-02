@@ -20,6 +20,38 @@ acts as Piet's "hands": it runs the interpreter (VM), handles window/keyboard I/
 renders the values Piet computes into pixels. **All game logic (player position, speed,
 collision, laps, biomes, camera pose) is computed at runtime by Piet instructions.**
 
+## Technical Highlights
+
+**What is Piet?** A deeply esoteric programming language: the program isn't text — it's a
+**picture** made of colored blocks. The interpreter starts at the top-left corner and walks
+block by block, deciding which instruction to run from the **RGB color difference between
+two colors** — all with a single stack, no variables, no functions, and no loops.
+
+**Why is this project hard?**
+
+- **No functions, no variables — just one stack and a DP/CC pointer.** All game logic
+  (speed clamping, collision detection, biomes, camera pose) has to be derived with pure
+  stack formulas.
+- **Instructions come from colors.** "Writing" the program means arranging RGB pixels into
+  specific shapes. An integer has to be decomposed digit by digit, and each PUSH block must
+  be ≤10 wide — otherwise a row wrap would change the turning semantics.
+- **Serpentine layout + black walls for turning.** The code is laid out back-and-forth in a
+  1803×1803 frame; black walls guarantee the turning geometry is fully deterministic.
+- **Math done entirely with integers.** Piet has no floats. `sin` uses fixed-point with a
+  Taylor-3 polynomial; `π` is reduced with `MOD` plus quadrant folding; pseudorandomness
+  comes from an on-the-fly linear congruential generator (LCG) — all `DIVIDE/MOD`, integer
+  only, with ≤1% error.
+- **No "loops" — learned jumps instead.** Since Piet can't express loops, `EXT_SKIP_IF` +
+  `EXT_FRAME_START` implement a guard branch: record the block position on the first frame,
+  then mechanically jump on every later frame.
+- **One picture is the source of truth.** `game_core.png` (450k+ codels) determines all
+  world data and rules at compile time; Python only interprets and renders, with zero game
+  decisions at runtime.
+
+**The result:** not just runnable — it ships an OpenGL 3D renderer, HUD gauges
+(speedometer / rev counter / timer / minimap), a multi-biome track, and particle effects
+(falling leaves), all holding within the **60fps** target.
+
 ## Controls
 
 | Key | Action |
